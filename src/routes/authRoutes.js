@@ -13,7 +13,7 @@ router.get('/register', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    res.redirect('register');
+    res.redirect('login');
 });
 
 // Render login page
