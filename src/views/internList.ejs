@@ -1,0 +1,299 @@
+    <!DOCTYPE html>
+    <html lang="en" class="h-full bg-gray-100">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Task Assignment</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <style>
+            .fade-out {
+                opacity: 1;
+                transition: opacity 0.5s ease-in-out;
+            }
+            .fade-out.hidden {
+                opacity: 0;
+            }
+        </style>
+    </head>
+    <body class="h-full">
+        <div class="min-h-full">
+            <nav class="bg-indigo-600">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <a href="/account?token=<%= token %>"><img class="h-10 w-10 rounded-full" src="https://www.freeiconspng.com/thumbs/computer-user-icon/computer-user-icon-28.png" alt="Workflow">
+                                </a>
+                            </div>
+                            <div class="hidden md:block">
+                                <div class="ml-10 flex items-baseline space-x-4">
+                                    <a href="#" class="bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium">Task Assignment</a>
+                                    <a href="/account?token=<%= token %>" class="text-white hover:bg-indigo-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                                    <a href="/approve?token=<%= token %>" class="text-white hover:bg-indigo-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Task Approval</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-4 flex items-center md:ml-6">
+                                <span class="text-white mr-4">Welcome, <%= name %></span>
+                                <a href="/logout" class="text-white hover:bg-indigo-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+                            </div>
+                        </div>
+                        <div class="-mr-2 flex md:hidden">
+                            <button type="button" class="bg-indigo-600 inline-flex items-center justify-center p-2 rounded-md text-indigo-200 hover:text-white hover:bg-indigo-500 hover:bg-opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-600 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                                <span class="sr-only">Open main menu</span>
+                                <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile menu, show/hide based on menu state. -->
+                <div class="md:hidden" id="mobile-menu">
+                    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                        <a href="#" class="bg-indigo-700 text-white block px-3 py-2 rounded-md text-base font-medium">Task Assignment</a>
+                        <a href="/account?token=<%= token %>" class="text-white hover:bg-indigo-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                        <a href="/approve?token=<%= token %>" class="text-white hover:bg-indigo-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Task Approval</a>
+                    </div>
+                    <div class="pb-3 border-t border-indigo-700">
+                        <div class="mt-1 px-2 space-y-1">
+                            <a href="/logout" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-indigo-500 hover:bg-opacity-75">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <header class="bg-white shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Intern Task Assignment</h1>
+                </div>
+            </header>
+
+            <main>
+                <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                    <div class="px-4 py-6 sm:px-0">
+                        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                            <div class="bg-white overflow-hidden shadow rounded-lg">
+                                <div class="px-4 py-5 sm:p-6">
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Assign New Task</h2>
+                                    <% if (interns.length === 0) { %>
+                                        <p class="text-gray-600">No interns available</p>
+                                    <% } else { %>
+                                        <form action="/api/tasks/assign" method="POST" id="assignTaskForm" class="space-y-4">
+                                            <input type="hidden" name="token" value="<%= token %>">
+
+                                            <div>
+                                                <label for="title" class="block text-sm font-medium text-gray-700">Task Title</label>
+                                                <input type="text" id="title" name="title" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            </div>
+
+                                            <div>
+                                                <label for="description" class="block text-sm font-medium text-gray-700">Task Description</label>
+                                                <textarea id="description" name="description" rows="3" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                                            </div>
+
+                                            <div>
+                                                <label for="assignedTo" class="block text-sm font-medium text-gray-700">Assign to</label>
+                                                <select id="assignedTo" name="assignedTo" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                                    <% interns.forEach(intern => { %>
+                                                        <option value="<%= intern._id %>"><%= intern.name %></option>
+                                                    <% }); %>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label for="deadline" class="block text-sm font-medium text-gray-700">Deadline</label>
+                                                <input type="text" id="deadline" name="deadline" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            </div>
+
+                                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                Assign Task
+                                            </button>
+                                        </form>
+
+                                        <!-- Success Message -->
+                                        <div id="successMessage" class="mt-4 p-4 bg-green-100 text-green-700 rounded-md hidden fade-out">
+                                            Task assigned successfully!
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <div class="bg-white overflow-hidden shadow rounded-lg">
+                                <div class="px-4 py-5 sm:p-6">
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Intern Task Distribution</h2>
+                                    <canvas id="taskDistributionChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="bg-white overflow-hidden shadow rounded-lg lg:col-span-2">
+                                <div class="px-4 py-5 sm:p-6">
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Task Assignments</h2>
+                                    <div class="overflow-x-auto">
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task</th>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deadline</th>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned At</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-200" id="recentTasksList">
+                                                <% recentTasks.forEach(task => { %>
+                                                    <tr>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= task.title %></td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= task.assignedTo.name %></td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= task.deadline.toLocaleDateString() %></td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= task.createdAt.toLocaleDateString() %></td>
+                                                    </tr>
+                                                <% }) %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script>
+            // Mobile menu toggle
+            const mobileMenuButton = document.querySelector('[aria-controls="mobile-menu"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIconOpen = mobileMenuButton.querySelector('svg:first-child');
+            const menuIconClose = mobileMenuButton.querySelector('svg:last-child');
+
+            // By default, hide the mobile menu
+            mobileMenu.classList.add('hidden');
+
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+                // Toggle the "aria-expanded" attribute
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+
+                // Toggle the visibility of the mobile menu
+                mobileMenu.classList.toggle('hidden');
+
+                // Toggle the icons (hamburger and close icons)
+                menuIconOpen.classList.toggle('hidden');
+                menuIconClose.classList.toggle('hidden');
+            });
+
+            // Initialize Flatpickr for the deadline input
+            flatpickr("#deadline", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                minDate: "today"
+            });
+
+            // Task assignment form submission
+            document.getElementById('assignTaskForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                fetch(this.action, {
+                    method: this.method,
+                    body: new URLSearchParams(new FormData(this)),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        // Show success message
+                        const successMessage = document.getElementById('successMessage');
+                        successMessage.classList.remove('hidden');
+                        setTimeout(() => successMessage.classList.add('hidden'), 3000);
+
+                        // Update recent tasks list
+                        updateRecentTasks(
+                            this.title.value,
+                            this.assignedTo.options[this.assignedTo.selectedIndex].text,
+                            this.deadline.value
+                        );
+
+                        // Clear form inputs
+                        this.reset();
+
+                        // Update chart (in a real application, you'd fetch updated data here)
+                        updateChart();
+                    }
+                }).catch(error => console.error('Error:', error));
+            });
+
+            // Function to update recent tasks list
+            function updateRecentTasks(title, assignee, deadline) {
+                const recentTasksList = document.getElementById('recentTasksList');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${title}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${assignee}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${deadline}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Just now</td>
+                `;
+                recentTasksList.insertBefore(newRow, recentTasksList.firstChild);
+            }
+
+            // Initialize and update chart
+            let myChart;
+            function updateChart() {
+        const ctx = document.getElementById('taskDistributionChart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (myChart) {
+            myChart.destroy();
+        }
+
+        // Use the dynamic data passed from the backend
+        const internNames = <%- JSON.stringify(internNames) %>;
+        const taskCounts = <%- JSON.stringify(taskCounts) %>;
+
+        // Create new chart with actual data
+        myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: internNames,
+                datasets: [{
+                    data: taskCounts,
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.8)',
+                        'rgba(167, 139, 250, 0.8)',
+                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(251, 146, 60, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Pending Task Distribution Among Interns',
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+            // Initial chart update
+            updateChart();
+
+        </script>
+    </body>
+    </html>

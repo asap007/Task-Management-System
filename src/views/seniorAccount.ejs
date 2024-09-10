@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Senior Dashboard | Mediaflare</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-full">
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="/account?token=<%= token %>"><img src="https://www.freeiconspng.com/thumbs/computer-user-icon/computer-user-icon-28.png" alt="Logo" class="w-10 h-10 rounded-full">
+                    </a>
+                    <h1 class="text-xl font-bold text-indigo-800 hidden sm:block">Senior Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600 text-sm hidden sm:inline">Welcome, <span class="font-semibold text-indigo-700"><%= name %></span></span>
+                    <a href="/logout" class="text-red-500 hover:text-red-700 font-medium transition duration-300 ease-in-out text-sm">Logout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Team Performance</h2>
+                    <div style="height: 300px;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Intern Task Status</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pending</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <% interns.forEach(function(intern) { %>
+                                    <tr class="hover:bg-gray-50 transition duration-300">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= intern.name %></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600"><%= intern.completedTasks %></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-500"><%= intern.pendingTasks %></td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
+                    <div class="space-y-3">
+                        <% if (token) { %>
+                            <a href="/interns?token=<%= token %>" class="block w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out text-center font-medium text-sm">
+                                Assign Intern Tasks
+                            </a>
+                        <% } else { %>
+                            <p class="text-red-500 mb-2 text-sm">Error: Token is not available.</p>
+                        <% } %>
+                        <a href="/approve?token=<%= token %>" class="block w-full bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition duration-300 ease-in-out text-center font-medium text-sm">
+                            Approve Tasks
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Upcoming Deadlines</h2>
+                    <% if (tasks.length === 0) { %>
+                        <p class="text-gray-600 text-sm">No upcoming deadlines</p>
+                    <% } else { %>
+                        <ul class="space-y-4">
+                            <% tasks.forEach(task => { %>
+                                <li class="text-sm bg-gray-50 p-3 rounded-lg">
+                                    <h3 class="font-semibold text-indigo-600 mb-1"><%= task.title %></h3>
+                                    <p class="text-gray-600">
+                                        <span class="font-medium">Deadline:</span> 
+                                        <%= new Date(task.deadline).toLocaleDateString() %>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <span class="font-medium">Assigned to:</span> 
+                                        <%= task.assignedTo.name %>
+                                    </p>
+                                    <p class="mt-1">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full
+                                            <%= task.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+                                               task.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 
+                                               'bg-red-100 text-red-800' %>">
+                                            <%= task.status %>
+                                        </span>
+                                    </p>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-indigo-900 text-white py-4 mt-8">
+        <div class="container mx-auto text-center text-sm">
+            <p>&copy; 2024 Mediaflare. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: <%- JSON.stringify(interns.map(intern => intern.name)) %>,
+                datasets: [
+                    {
+                        label: 'Tasks Completed',
+                        data: <%- JSON.stringify(interns.map(intern => intern.completedTasks)) %>,
+                        backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Tasks Pending',
+                        data: <%- JSON.stringify(interns.map(intern => intern.pendingTasks)) %>,
+                        backgroundColor: 'rgba(249, 115, 22, 0.6)',
+                        borderColor: 'rgba(249, 115, 22, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

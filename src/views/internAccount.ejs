@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <title>Intern Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .task-card {
+            transition: all 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-description {
+            overflow-y: auto;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .slide-enter {
+            animation: slide-in 0.3s ease-out;
+        }
+
+        @keyframes slide-in {
+            0% {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" x-data="{ currentFilter: 'all' }">
+    <nav class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <svg class="h-8 w-8 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                    <h1 class="text-2xl font-bold text-gray-800">Intern Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <p class="text-gray-600">Welcome, <span class="font-semibold"><%= name %></span>!</p>
+                    <a href="/logout" class="text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out flex items-center">
+                        <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-4">Your Tasks</h2>
+            <div class="flex flex-wrap gap-2">
+                <button 
+                    @click="currentFilter = 'all'" 
+                    :class="{'bg-blue-600 text-white': currentFilter === 'all', 'bg-gray-200 text-gray-700': currentFilter !== 'all'}"
+                    class="filter-btn px-4 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                    All
+                </button>
+                <button 
+                    @click="currentFilter = 'in_progress'" 
+                    :class="{'bg-blue-600 text-white': currentFilter === 'in_progress', 'bg-gray-200 text-gray-700': currentFilter !== 'in_progress'}"
+                    class="filter-btn px-4 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                    In Progress
+                </button>
+                <button 
+                    @click="currentFilter = 'on_hold'" 
+                    :class="{'bg-blue-600 text-white': currentFilter === 'on_hold', 'bg-gray-200 text-gray-700': currentFilter !== 'on_hold'}"
+                    class="filter-btn px-4 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                    On Hold
+                </button>
+                <button 
+                    @click="currentFilter = 'submitted'" 
+                    :class="{'bg-blue-600 text-white': currentFilter === 'submitted', 'bg-gray-200 text-gray-700': currentFilter !== 'submitted'}"
+                    class="filter-btn px-4 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                    Submitted
+                </button>
+                <button 
+                    @click="currentFilter = 'approved'" 
+                    :class="{'bg-blue-600 text-white': currentFilter === 'approved', 'bg-gray-200 text-gray-700': currentFilter !== 'approved'}"
+                    class="filter-btn px-4 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                    Approved
+                </button>
+                <button 
+                    @click="currentFilter = 'rejected'" 
+                    :class="{'bg-blue-600 text-white': currentFilter === 'rejected', 'bg-gray-200 text-gray-700': currentFilter !== 'rejected'}"
+                    class="filter-btn px-4 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                    Rejected
+                </button>
+            </div>
+        </div>
+        
+        <% if (tasks.length === 0) { %>
+            <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                </svg>
+                <h3 class="mt-2 text-xl font-medium text-gray-900">No tasks assigned</h3>
+                <p class="mt-1 text-gray-500">New tasks will appear here when they're assigned to you.</p>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="taskContainer">
+            <% tasks.forEach(task => { %>
+                <div 
+                    x-show="currentFilter === 'all' || currentFilter === '<%= task.status %>'"
+                    x-transition:enter="slide-enter"
+                    class="task-card bg-white rounded-lg shadow-lg overflow-hidden"
+                    data-status="<%= task.status %>"
+                >
+                    <div class="p-6 card-content">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-blue-600 leading-tight"><%= task.title %></h3>
+                            <span class="px-3 py-1 text-sm font-medium rounded-full <%= task.status === 'approved' ? 'bg-green-100 text-green-800' : task.status === 'submitted' ? 'bg-blue-100 text-blue-800' : task.status === 'rejected' ? 'bg-red-100 text-red-800' : task.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' %>">
+                                <%= task.status.replace('_', ' ') %>
+                            </span>
+                        </div>
+                        
+                        <div class="task-details mb-4">
+                            <p class="text-sm text-gray-500 flex items-center">
+                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                Assigned by: <span class="font-medium text-gray-700 ml-1"><%= task.assignedBy %></span>
+                            </p>
+                            <p class="text-sm text-gray-500 flex items-center mt-1">
+                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Deadline: <span class="font-medium text-red-600 ml-1"><%= new Date(task.deadline).toLocaleString() %></span>
+                            </p>
+                        </div>
+
+                        <div class="task-description mb-4">
+                            <p class="text-gray-600 leading-relaxed"><%= task.description %></p>
+                        </div>
+                        
+                        <% if (task.status !== 'approved' && task.status !== 'rejected') { %>
+                            <form action="/api/tasks/complete" method="POST" class="space-y-4 mt-auto">
+                                <input type="hidden" name="token" value="<%= token %>">
+                                <input type="hidden" name="taskId" value="<%= task._id %>">
+                                
+                                <div>
+                                    <label for="status-<%= task._id %>" class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+                                    <select id="status-<%= task._id %>" name="status" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="assigned" <%= task.status === 'assigned' ? 'selected' : '' %>>Assigned</option>
+                                        <option value="in_progress" <%= task.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
+                                        <option value="submitted" <%= task.status === 'submitted' ? 'selected' : '' %>>Submitted</option>
+                                        <option value="on_hold" <%= task.status === 'on_hold' ? 'selected' : '' %>>On Hold</option>
+                                    </select>
+                                </div>
+                                <div id="driveLinkContainer-<%= task._id %>" class="<%= task.status === 'submitted' ? '' : 'hidden' %>">
+                                    <label for="driveLink-<%= task._id %>" class="block text-sm font-medium text-gray-700 mb-1">Drive Link:</label>
+                                    <input type="url" id="driveLink-<%= task._id %>" name="driveLink" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value="<%= task.driveLink %>">
+                                </div>
+                                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                                    Update Task
+                                </button>
+                            </form>
+                        <% } else if (task.status === 'approved') { %>
+                            <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-auto rounded-md">
+                                <p class="text-green-700 font-medium flex items-center">
+                                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Task Approved
+                                </p>
+                                <a href="<%= task.driveLink %>" class="text-blue-600 hover:underline block mt-2 flex items-center" target="_blank" rel="noopener noreferrer">
+                                    <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                    View Drive Link
+                                </a>
+                                <% if (task.feedback) { %>
+                                    <div class="mt-2 bg-white p-3 rounded-md shadow-sm">
+                                        <p class="text-gray-700 text-sm font-medium mb-1">Feedback:</p>
+                                        <p class="text-gray-600 text-sm"><%= task.feedback %></p>
+                                    </div>
+                                <% } %>                                
+                            </div>
+                        <% } else if (task.status === 'rejected') { %>
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 mt-auto rounded-md">
+                                <p class="text-red-700 font-medium flex items-center">
+                                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Task Rejected
+                                </p>
+                                <% if (task.feedback) { %>
+                                    <div class="mt-2 bg-white p-3 rounded-md shadow-sm">
+                                        <p class="text-gray-700 text-sm font-medium mb-1">Feedback:</p>
+                                        <p class="text-gray-600 text-sm"><%= task.feedback %></p>
+                                    </div>
+                                <% } %>
+                                <form action="/api/tasks/resubmit" method="POST" class="space-y-4 mt-4">
+                                    <input type="hidden" name="token" value="<%= token %>">
+                                    <input type="hidden" name="taskId" value="<%= task._id %>">
+                                    <label for="driveLink-<%= task._id %>" class="block text-sm font-medium text-gray-700 mb-1">Drive Link:</label>
+                                    <div class="flex">
+                                        <input type="url" id="driveLink-<%= task._id %>" name="driveLink" class="flex-grow p-2 border border-gray-300 rounded-l-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value="<%= task.driveLink %>" required>
+                                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                                            Resubmit
+                                        </button>
+                                    </div>
+                                </form>                                
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+            </div>
+        <% } %>
+    </main>
+
+    <script>
+        // Dynamic form updates
+        document.querySelectorAll('[id^="status-"]').forEach(select => {
+            select.addEventListener('change', (event) => {
+                const taskId = event.target.id.split('-')[1];
+                const driveLinkContainer = document.getElementById(`driveLinkContainer-${taskId}`);
+                
+                if (event.target.value === 'submitted') {
+                    driveLinkContainer.classList.remove('hidden');
+                } else {
+                    driveLinkContainer.classList.add('hidden');
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
