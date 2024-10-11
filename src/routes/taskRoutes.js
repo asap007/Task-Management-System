@@ -12,8 +12,8 @@ const router = express.Router();
 router.post('/tasks/complete', authMiddleware, async (req, res) => {
     const { token, taskId, status, driveLink } = req.body;
 
-    console.log("Request Body:", req.body); // Log the entire request body
-    console.log("Received taskId:", taskId); // Debugging line
+    console.log("Request Body:", req.body);
+    console.log("Received taskId:", taskId);
 
     try {
         if (!token) {
@@ -35,6 +35,19 @@ router.post('/tasks/complete', authMiddleware, async (req, res) => {
         console.log(task);
         if (!task || task.assignedTo.toString() !== user._id.toString()) {
             return res.status(404).json({ message: 'Task not found' });
+        }
+
+        // Initialize statusHistory array if it doesn't exist
+        if (!task.statusHistory) {
+            task.statusHistory = [];
+        }
+
+        // Only add to history if the status is actually changing
+        if (task.status !== status) {
+            task.statusHistory.push({
+                status,
+                timestamp: new Date()
+            });
         }
 
         // Update task status and drive link

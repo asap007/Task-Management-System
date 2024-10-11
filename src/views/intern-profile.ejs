@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intern Profile - <%= intern.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.3.0/alpine.js" integrity="sha512-nIwdJlD5/vHj23CbO2iHCXtsqzdTTx3e3uAmpTm4x2Y8xCIFyWu4cSIV8GaGe2UNVq86/1h9EgUZy7tn243qdA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-white shadow-sm sticky top-0 z-10">
+            <nav class="bg-green-600">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <a href="/account?token=<%= token %>"><img class="h-10 w-10 rounded-full" src="https://www.freeiconspng.com/thumbs/computer-user-icon/computer-user-icon-28.png" alt="Workflow">
+                                </a>
+                            </div>
+                            <div class="hidden md:block">
+                                <div class="ml-10 flex items-baseline space-x-4">
+                                    <a href="#" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">Intern Profile</a>
+                                    <a href="/account?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                                    <a href="/approve?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Task Approval</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-4 flex items-center md:ml-6">
+                                <span class="text-white mr-4">Welcome, <%= name %></span>
+                                <a href="/logout" class="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+                            </div>
+                        </div>
+                        <div class="-mr-2 flex md:hidden">
+                            <button type="button" class="bg-green-600 inline-flex items-center justify-center p-2 rounded-md text-green-200 hover:text-white hover:bg-green-500 hover:bg-opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-600 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                                <span class="sr-only">Open main menu</span>
+                                <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile menu, show/hide based on menu state. -->
+                <div class="md:hidden" id="mobile-menu">
+                    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                        <a href="#" class="bg-green-700 text-white block px-3 py-2 rounded-md text-base font-medium">Intern Profile</a>
+                        <a href="/account?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                        <a href="/approve?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Task Approval</a>
+                    </div>
+                    <div class="pb-3 border-t border-green-700">
+                        <div class="mt-1 px-2 space-y-1">
+                            <a href="/logout" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-500 hover:bg-opacity-75">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-2xl leading-6 font-bold text-gray-900">
+                            <%= intern.name %>
+                        </h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                            <%= intern.email %>
+                        </p>
+                    </div>
+                    <img class="h-24 w-24 rounded-full border-4 border-indigo-200" src="https://ui-avatars.com/api/?name=<%= intern.name %>&background=random" alt="<%= intern.name %>">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Total Tasks</h3>
+                    <p class="text-3xl font-bold text-indigo-600"><%= tasks.length %></p>
+                </div>
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Completed Tasks</h3>
+                    <p class="text-3xl font-bold text-green-600"><%= tasks.filter(task => task.status === 'submitted' || task.status === 'approved').length %></p>
+                </div>
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">In Progress Tasks</h3>
+                    <p class="text-3xl font-bold text-yellow-600"><%= tasks.filter(task => task.status === 'in_progress').length %></p>
+                </div>
+            </div>
+
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                        Task Progress
+                    </h3>
+                </div>
+                <div class="border-t border-gray-200 p-4 sm:p-6">
+                    <div class="w-full max-w-xs mx-auto h-64 sm:h-80">
+                        <canvas id="taskProgressChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div x-data="{ openTask: null }" class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                        Task Timeline
+                    </h3>
+                </div>
+                <div class="border-t border-gray-200">
+                    <ul class="divide-y divide-gray-200">
+                        <% tasks.forEach(task => { %>
+                            <li x-data="{ showTimeline: false }" x-show="openTask === null || openTask === '<%= task.status %>'" class="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-lg font-semibold"><%= task.title %></h4>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        <%= 
+                                            task.status === 'completed' ? 'bg-green-100 text-green-800' : 
+                                            task.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' : 
+                                            task.status === 'on_hold' ? 'bg-red-100 text-red-800' :
+                                            'bg-blue-100 text-blue-800'
+                                        %>">
+                                        <%= task.status %>
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1"><%= task.description %></p>
+                                <div class="mt-4 flex justify-between items-center">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                        </svg>
+                                        Deadline: <%= new Date(task.deadline).toLocaleDateString() %>
+                                    </div>
+                                </div>
+                                <div x-show="showTimeline" class="mt-4">
+                                    <h5 class="text-sm font-medium text-gray-500">Timeline</h5>
+                                    <div class="mt-2 relative">
+                                        <div class="absolute h-full w-0.5 bg-gray-200 left-2"></div>
+                                        <ul class="relative z-0">
+                                            <% 
+                                            // Create an array of all status changes, including the initial assignment
+                                            let allStatuses = [
+                                                { status: 'assigned', timestamp: task.createdAt }
+                                            ];
+                                            
+                                            // Add other status changes from history
+                                            if (task.statusHistory && task.statusHistory.length > 0) {
+                                                allStatuses = allStatuses.concat(task.statusHistory);
+                                            }
+                                            
+                                            // Remove duplicates based on status and timestamp
+                                            const uniqueStatuses = allStatuses.filter((status, index, self) =>
+                                                index === self.findIndex((s) => 
+                                                    s.status === status.status && s.timestamp.toString() === status.timestamp.toString()
+                                                )
+                                            );
+                                            
+                                            // Sort by timestamp, oldest first
+                                            uniqueStatuses.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                                            
+                                            uniqueStatuses.forEach(historyItem => { 
+                                            %>
+                                                <li class="mb-2 ml-6">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 w-4 h-4 rounded-full 
+                                                            <%= historyItem.status === 'in_progress' ? 'bg-yellow-500' : 
+                                                                historyItem.status === 'on_hold' ? 'bg-orange-500' : 
+                                                                historyItem.status === 'submitted' ? 'bg-blue-400' : 
+                                                                historyItem.status === 'approved' ? 'bg-green-500' : 
+                                                                historyItem.status === 'assigned' ? 'bg-blue-500' : 
+                                                                'bg-gray-500' %> 
+                                                            absolute left-0">
+                                                        </div>
+                                                        <div class="ml-4 text-sm font-medium text-gray-500">
+                                                            <%= historyItem.status.charAt(0).toUpperCase() + historyItem.status.slice(1).replace('_', ' ') %>: 
+                                                            <%= new Date(historyItem.timestamp).toLocaleString() %>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            <% }); %>
+                                        </ul>
+                                    </div>
+                                </div>                                
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-white border-t border-gray-200 mt-8">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <p class="text-center text-sm text-gray-500">&copy; 2024 Mediaflare. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.querySelector('[aria-controls="mobile-menu"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIconOpen = mobileMenuButton.querySelector('svg:first-child');
+            const menuIconClose = mobileMenuButton.querySelector('svg:last-child');
+
+            // By default, hide the mobile menu
+            mobileMenu.classList.add('hidden');
+
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+                // Toggle the "aria-expanded" attribute
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+
+                // Toggle the visibility of the mobile menu
+                mobileMenu.classList.toggle('hidden');
+
+                // Toggle the icons (hamburger and close icons)
+                menuIconOpen.classList.toggle('hidden');
+                menuIconClose.classList.toggle('hidden');
+            });
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const ctx = document.getElementById('taskProgressChart').getContext('2d');
+            const taskProgressChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Approved', 'In Progress', 'On Hold', 'Assigned', 'Submitted', 'Rejected'],
+                    datasets: [{
+                        data: [
+                            <%= tasks.filter(task => task.status === 'approved').length %>,
+                            <%= tasks.filter(task => task.status === 'in_progress').length %>,
+                            <%= tasks.filter(task => task.status === 'on_hold').length %>,
+                            <%= tasks.filter(task => task.status === 'assigned').length %>,
+                            <%= tasks.filter(task => task.status === 'submitted').length %>,
+                            <%= tasks.filter(task => task.status === 'rejected').length %>
+                        ],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(234, 179, 8, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(59, 230, 246, 0.8)',
+                            'rgba(213, 12, 12, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(34, 197, 94, 1)',
+                            'rgba(234, 179, 8, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(59, 230, 246, 1)',
+                            'rgba(213, 12, 12, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

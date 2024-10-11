@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="https://www.freeiconspng.com/thumbs/computer-user-icon/computer-user-icon-28.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-4">
-                    <a href="/account?token=<%= token %>"><img src="https://www.freeiconspng.com/thumbs/computer-user-icon/computer-user-icon-28.png" alt="Logo" class="w-10 h-10 rounded-full">
+                    <a href="/account?token=<%= token %>"><img src="/images/logo.png" alt="Logo" class="w-10 h-10 rounded-full">
                     </a>
                     <h1 class="text-xl font-bold text-indigo-800 hidden sm:block">Senior Dashboard</h1>
                 </div>
@@ -79,6 +79,9 @@
                         <% } %>
                         <a href="/approve?token=<%= token %>" class="block w-full bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition duration-300 ease-in-out text-center font-medium text-sm">
                             Approve Tasks
+                        </a>
+                        <a href="/intern-tasks?token=<%= token %>" class="block w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition duration-300 ease-in-out text-center font-medium text-sm">
+                            Interns
                         </a>
                     </div>
                 </div>

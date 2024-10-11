@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interns List</title>
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-white shadow">
+            <nav class="bg-green-600">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <a href="/account?token=<%= token %>"><img class="h-10 w-10 rounded-full" src="/images/logo.png" alt="Workflow">
+                                </a>
+                            </div>
+                            <div class="hidden md:block">
+                                <div class="ml-10 flex items-baseline space-x-4">
+                                    <a href="#" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">Interns</a>
+                                    <a href="/account?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                                    <a href="/approve?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Task Approval</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-4 flex items-center md:ml-6">
+                                <span class="text-white mr-4">Welcome, <%= name %></span>
+                                <a href="/logout" class="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+                            </div>
+                        </div>
+                        <div class="-mr-2 flex md:hidden">
+                            <button type="button" class="bg-green-600 inline-flex items-center justify-center p-2 rounded-md text-green-200 hover:text-white hover:bg-green-500 hover:bg-opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-600 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                                <span class="sr-only">Open main menu</span>
+                                <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile menu, show/hide based on menu state. -->
+                <div class="md:hidden" id="mobile-menu">
+                    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                        <a href="#" class="bg-green-700 text-white block px-3 py-2 rounded-md text-base font-medium">Intern Profile</a>
+                        <a href="/account?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                        <a href="/approve?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Task Approval</a>
+                    </div>
+                    <div class="pb-3 border-t border-green-700">
+                        <div class="mt-1 px-2 space-y-1">
+                            <a href="/logout" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-500 hover:bg-opacity-75">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h2 class="text-lg leading-6 font-medium text-gray-900">Interns List</h2>
+                </div>
+                <div class="border-t border-gray-200">
+                    <ul class="divide-y divide-gray-200">
+                        <% interns.forEach(intern => { %>
+                            <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 transition duration-150 ease-in-out">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name=<%= intern.name %>&background=random" alt="<%= intern.name %>">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900"><%= intern.name %></div>
+                                            <div class="text-sm text-gray-500"><%= intern.email %></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a href="/intern/<%= intern._id %>?token=<%= token %>" class="text-indigo-600 hover:text-indigo-900">View Profile</a>
+                                    </div>
+                                </div>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-white border-t border-gray-200">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <p class="text-center text-sm text-gray-500">&copy; 2024 Mediaflare. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+    <script>
+        const mobileMenuButton = document.querySelector('[aria-controls="mobile-menu"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIconOpen = mobileMenuButton.querySelector('svg:first-child');
+            const menuIconClose = mobileMenuButton.querySelector('svg:last-child');
+
+            // By default, hide the mobile menu
+            mobileMenu.classList.add('hidden');
+
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+                // Toggle the "aria-expanded" attribute
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+
+                // Toggle the visibility of the mobile menu
+                mobileMenu.classList.toggle('hidden');
+
+                // Toggle the icons (hamburger and close icons)
+                menuIconOpen.classList.toggle('hidden');
+                menuIconClose.classList.toggle('hidden');
+            });
+    </script>
+</body>
+</html>

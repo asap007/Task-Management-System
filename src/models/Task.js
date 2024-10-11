@@ -5,6 +5,16 @@ const TaskSchema = new mongoose.Schema({
     description: { type: String, required: true },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    statusHistory: [{
+        status: {
+            type: String,
+            enum: ['assigned', 'submitted', 'approved', 'in_progress', 'on_hold', 'rejected', 'completed']
+        },
+        timestamp: {
+            type: Date,
+            default: Date.now
+        }
+    }],
     status: { 
         type: String, 
         enum: ['assigned', 'submitted', 'approved', 'in_progress', 'on_hold', 'rejected', 'completed'], 
@@ -16,5 +26,16 @@ const TaskSchema = new mongoose.Schema({
     submittedAt: { type: Date },
     feedback: { type: String }
 }, { timestamps: true });
+
+// Add a pre-save middleware to automatically update statusHistory
+TaskSchema.pre('save', function(next) {
+    if (this.isModified('status')) {
+        this.statusHistory.push({
+            status: this.status,
+            timestamp: new Date()
+        });
+    }
+    next();
+});
 
 module.exports = mongoose.model('Task', TaskSchema);

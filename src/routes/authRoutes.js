@@ -69,11 +69,13 @@ router.get('/account', authMiddleware, async (req, res) => {
                 };
             }));
 
-            // Fetch upcoming deadlines
+            // Fetch upcoming deadlines and sort by deadline
             const tasks = await Task.find({
                 assignedBy: req.user._id,
                 status: { $nin: ['approved', 'submitted'] }
-            }).populate('assignedTo', 'name');
+            })
+            .sort({ deadline: 1 }) // Sort by deadline in ascending order
+            .populate('assignedTo', 'name');
 
             res.render('seniorAccount', { 
                 name: req.user.name, 
@@ -89,6 +91,7 @@ router.get('/account', authMiddleware, async (req, res) => {
                 description: task.description,
                 assignedBy: task.assignedBy.name,
                 status: task.status,
+                statusHistory: task.statusHistory,
                 deadline: task.deadline,
                 feedback: task.feedback,
                 driveLink: task.driveLink,
@@ -160,6 +163,82 @@ router.get('/interns', authMiddleware, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching interns or tasks:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+router.get('/intern-tasks', authMiddleware, async (req, res) => {
+    try {
+        const token = req.query.token;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+
+        if (!user || user.role !== 'senior') {
+            return res.redirect('/login');
+        }
+
+        // Fetch all interns
+        const interns = await User.find({ role: 'intern' }).select('name email').exec();
+
+        res.render('intern-tasks', { 
+            interns, 
+            token, 
+            name: req.user.name 
+        });
+    } catch (error) {
+        console.error('Error fetching interns:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+router.get('/intern/:id', authMiddleware, async (req, res) => {
+    try {
+        const token = req.query.token;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+
+        if (!user || user.role !== 'senior') {
+            return res.redirect('/login');
+        }
+
+        const internId = req.params.id;
+        const intern = await User.findById(internId).select('name email').exec();
+        
+        // Fetch tasks with populated fields and process them
+        const tasks = await Task.find({ assignedTo: internId })
+            .sort({ createdAt: -1 })
+            .lean() // Convert to plain JavaScript objects for easier manipulation
+            .exec();
+
+        // Process each task to include formatted status history
+        const processedTasks = tasks.map(task => {
+            return {
+                ...task,
+                formattedHistory: [
+                    // Always include the assigned status from createdAt
+                    {
+                        status: 'assigned',
+                        timestamp: task.createdAt,
+                        formattedTime: new Date(task.createdAt).toLocaleString()
+                    },
+                    // Add all status changes from statusHistory
+                    ...(task.statusHistory || []).map(history => ({
+                        status: history.status,
+                        timestamp: history.timestamp,
+                        formattedTime: new Date(history.timestamp).toLocaleString()
+                    }))
+                ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // Sort by timestamp descending
+            };
+        });
+
+        res.render('intern-profile', {
+            intern,
+            tasks: processedTasks,
+            token,
+            name: req.user.name
+        });
+    } catch (error) {
+        console.error('Error fetching intern profile:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
