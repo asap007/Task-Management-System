@@ -30,6 +30,7 @@
                                 <div class="ml-10 flex items-baseline space-x-4">
                                     <a href="#" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">Intern Profile</a>
                                     <a href="/account?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                                    <a href="/interns?token=<%= token %>" class="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-green-500">Task Assignment</a>
                                     <a href="/approve?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium">Task Approval</a>
                                 </div>
                             </div>
@@ -59,6 +60,7 @@
                     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         <a href="#" class="bg-green-700 text-white block px-3 py-2 rounded-md text-base font-medium">Intern Profile</a>
                         <a href="/account?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                        <a href="/interns?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Task Assignment</a>
                         <a href="/approve?token=<%= token %>" class="text-white hover:bg-green-500 hover:bg-opacity-75 block px-3 py-2 rounded-md text-base font-medium">Task Approval</a>
                     </div>
                     <div class="pb-3 border-t border-green-700">
@@ -91,8 +93,8 @@
                     <p class="text-3xl font-bold text-indigo-600"><%= tasks.length %></p>
                 </div>
                 <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Completed Tasks</h3>
-                    <p class="text-3xl font-bold text-green-600"><%= tasks.filter(task => task.status === 'submitted' || task.status === 'approved').length %></p>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Approved Tasks</h3>
+                    <p class="text-3xl font-bold text-green-600"><%= tasks.filter(task => task.status === 'approved').length %></p>
                 </div>
                 <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">In Progress Tasks</h3>
