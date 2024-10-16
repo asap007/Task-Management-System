@@ -4,8 +4,6 @@ const User = require('../models/User');
 const authMiddleware = async (req, res, next) => {
     const token = req.query.token || req.body.token; // Check token in query or body
 
-    console.log('Token:', token); // Log the token
-
     if (!token) {
         return res.redirect('/login');
     }
